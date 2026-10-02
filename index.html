@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HMP এইচ এম প্রিন্টিং — ব্যবসা ব্যবস্থাপনা</title>
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:Arial,"Noto Sans Bengali",sans-serif;background:#f3f5f8;color:#172033}
+header{background:#fff;border-bottom:1px solid #ddd;padding:14px 18px;position:sticky;top:0;z-index:5}
+.brand{display:flex;align-items:center;gap:12px}.logo{font-weight:900;font-size:24px;border:3px solid #16205c;border-radius:18px;padding:3px 9px;color:#16205c}.brand h1{margin:0;font-size:21px}.brand small{color:#666}
+nav{display:flex;gap:7px;overflow:auto;margin-top:12px}button,.btn{border:0;border-radius:8px;padding:10px 13px;background:#16205c;color:white;cursor:pointer;font-size:14px}button.secondary{background:#e9edf5;color:#172033}.danger{background:#b42318}
+main{max-width:1200px;margin:20px auto;padding:0 14px}.panel{background:#fff;border:1px solid #e1e5ec;border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 2px 8px #0000000a}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card{background:#fff;border:1px solid #e1e5ec;border-radius:12px;padding:16px}.stat{font-size:26px;font-weight:800;margin-top:7px}
+label{display:block;font-weight:700;font-size:13px;margin:8px 0 5px}input,select,textarea{width:100%;padding:10px;border:1px solid #ccd3df;border-radius:7px;font-size:14px;background:#fff}textarea{min-height:75px}
+table{width:100%;border-collapse:collapse;margin-top:10px}th,td{border:1px solid #d9dee7;padding:7px;text-align:left;font-size:13px}th{background:#e74b32;color:white}
+.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.hidden{display:none}.right{text-align:right}.muted{color:#667085}
+.itemrow{display:grid;grid-template-columns:2.5fr .8fr .9fr .9fr .4fr;gap:7px;margin-bottom:7px;align-items:end}
+.sample{width:70px;height:55px;object-fit:cover;border:1px solid #ddd;border-radius:5px}
+.invoice-paper{background:white;max-width:900px;margin:auto;padding:25px;border:1px solid #ccc}
+.invoice-head{text-align:center;border-bottom:2px solid #e74b32;padding-bottom:10px}.invoice-head h2{margin:0;font-size:30px;color:#16205c}.invoice-head p{margin:4px}
+@media(max-width:800px){.grid{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}.itemrow{grid-template-columns:1.5fr .7fr .8fr .8fr .4fr}}
+@media print{body{background:#fff}.no-print,header,main>.panel:not(.print-panel){display:none!important}.print-panel{display:block!important;border:0;box-shadow:none;margin:0;padding:0}.invoice-paper{border:0;padding:0;max-width:none} @page{size:A4;margin:12mm}}
+</style>
+</head>
+<body>
+<header class="no-print">
+  <div class="brand">
+    <div class="logo">HMP</div>
+    <div><h1>এইচ এম প্রিন্টিং</h1><small>রোড নং-৮, প্লট নং-১৭, শ্যামপুর, কদমতলী, ঢাকা</small></div>
+  </div>
+  <nav>
+    <button onclick="show('dashboard')">ড্যাশবোর্ড</button>
+    <button onclick="show('invoice')">নতুন বিল</button>
+    <button onclick="show('challan')">চালান</button>
+    <button onclick="show('products')">মালের স্যাম্পল</button>
+    <button onclick="show('customers')">কাস্টমার</button>
+    <button onclick="show('history')">বিল তালিকা</button>
+  </nav>
+</header>
+
+<main>
+<section id="dashboard" class="page">
+  <div class="grid">
+    <div class="card"><div class="muted">আজকের বিল</div><div class="stat" id="statBills">0</div></div>
+    <div class="card"><div class="muted">আজকের বিক্রি</div><div class="stat" id="statSales">৳0</div></div>
+    <div class="card"><div class="muted">মোট পণ্য</div><div class="stat" id="statProducts">0</div></div>
+    <div class="card"><div class="muted">কাস্টমার</div><div class="stat" id="statCustomers">0</div></div>
+  </div>
+  <div class="panel">
+    <h2>HMP এইচ এম প্রিন্টিং</h2>
+    <p>এই সফটওয়্যারটি আপনার ক্যাশ মেমো/বিলের নমুনা অনুসারে তৈরি করা হয়েছে। বিল, চালান, পণ্যের স্যাম্পল এবং কাস্টমার তথ্য ব্রাউজারেই সংরক্ষণ হবে।</p>
+    <div class="actions"><button onclick="newInvoice()">＋ নতুন বিল তৈরি করুন</button><button class="secondary" onclick="show('products')">পণ্যের স্যাম্পল যোগ করুন</button></div>
+  </div>
+</section>
+
+<section id="invoice" class="page hidden">
+<div class="panel no-print">
+<h2>নতুন বিল / ক্যাশ মেমো</h2>
+<div class="grid2">
+<div><label>বিল নম্বর</label><input id="invNo"></div>
+<div><label>তারিখ</label><input id="invDate" type="date"></div>
+<div><label>নাম</label><input id="invCustomer" list="customerList"><datalist id="customerList"></datalist></div>
+<div><label>ঠিকানা</label><input id="invAddress"></div>
+</div>
+<div style="margin-top:15px"><b>মালের বিবরণ</b></div>
+<div id="invoiceItems"></div>
+<div class="actions"><button class="secondary" onclick="addItem()">＋ মাল যোগ করুন</button><button onclick="prepareInvoicePrint()">বিল দেখুন / প্রিন্ট</button></div>
+</div>
+<div id="printArea" class="panel print-panel hidden"></div>
+</section>
+
+<section id="challan" class="page hidden">
+<div class="panel no-print">
+<h2>নতুন চালান</h2>
+<div class="grid2">
+<div><label>চালান নম্বর</label><input id="chNo"></div>
+<div><label>তারিখ</label><input id="chDate" type="date"></div>
+<div><label>গ্রাহকের নাম</label><input id="chCustomer"></div>
+<div><label>ঠিকানা</label><input id="chAddress"></div>
+</div>
+<label>মালের বিবরণ</label><textarea id="chItems" placeholder="যেমন: ৯×২৮ — ১০ পিস"></textarea>
+<div class="actions"><button onclick="printChallan()">চালান দেখুন / প্রিন্ট</button></div>
+</div>
+<div id="challanPrint" class="panel print-panel hidden"></div>
+</section>
+
+<section id="products" class="page hidden">
+<div class="panel">
+<h2>মালের স্যাম্পল / পণ্য</h2>
+<div class="grid2">
+<div><label>পণ্যের নাম</label><input id="pName"></div>
+<div><label>পণ্য কোড</label><input id="pCode"></div>
+<div><label>ইউনিট</label><input id="pUnit" placeholder="পিস / কেজি / ফুট"></div>
+<div><label>দর</label><input id="pPrice" type="number"></div>
+<div><label>স্যাম্পল ছবি</label><input id="pImage" type="file" accept="image/*"></div>
+<div><label>বিবরণ</label><textarea id="pDesc"></textarea></div>
+</div>
+<div class="actions"><button onclick="saveProduct()">পণ্য সেভ করুন</button></div>
+</div>
+<div class="panel"><table><thead><tr><th>ছবি</th><th>নাম</th><th>কোড</th><th>ইউনিট</th><th>দর</th><th>বিবরণ</th><th></th></tr></thead><tbody id="productTable"></tbody></table></div>
+</section>
+
+<section id="customers" class="page hidden">
+<div class="panel">
+<h2>কাস্টমার</h2><div class="grid2"><div><label>নাম</label><input id="cName"></div><div><label>মোবাইল</label><input id="cPhone"></div><div><label>ঠিকানা</label><input id="cAddress"></div></div>
+<div class="actions"><button onclick="saveCustomer()">কাস্টমার সেভ করুন</button></div>
+</div>
+<div class="panel"><table><thead><tr><th>নাম</th><th>মোবাইল</th><th>ঠিকানা</th><th></th></tr></thead><tbody id="customerTable"></tbody></table></div>
+</section>
+
+<section id="history" class="page hidden">
+<div class="panel"><h2>বিল তালিকা</h2><table><thead><tr><th>নম্বর</th><th>তারিখ</th><th>কাস্টমার</th><th>মোট</th><th></th></tr></thead><tbody id="historyTable"></tbody></table></div>
+</section>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+const money=n=>'৳'+Number(n||0).toLocaleString('bn-BD');
+let products=JSON.parse(localStorage.getItem('hmp_products')||'[]');
+let customers=JSON.parse(localStorage.getItem('hmp_customers')||'[]');
+let invoices=JSON.parse(localStorage.getItem('hmp_invoices')||'[]');
+
+function today(){return new Date().toISOString().slice(0,10)}
+function nextNo(){return String(3000+invoices.length+1)}
+function show(id){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));$(id).classList.remove('hidden');if(id==='products')renderProducts();if(id==='customers')renderCustomers();if(id==='history')renderHistory();if(id==='dashboard')dashboard();if(id==='invoice' && !$('invNo').value)newInvoice();if(id==='challan'&&!$('chNo').value){$('chNo').value=nextNo();$('chDate').value=today()}}
+function newInvoice(){$('invNo').value=nextNo();$('invDate').value=today();$('invCustomer').value='';$('invAddress').value='';$('invoiceItems').innerHTML='';addItem();show('invoice')}
+function addItem(data={}){let d=document.createElement('div');d.className='itemrow';d.innerHTML=`<div><label>মাল</label><input class="itName" list="productList" value="${data.name||''}" oninput="autoPrice(this)"></div><div><label>পরিমাণ</label><input class="itQty" type="number" value="${data.qty||1}" min="0" step="any"></div><div><label>দর</label><input class="itPrice" type="number" value="${data.price||0}" min="0" step="any"></div><div><label>টাকা</label><input class="itTotal" readonly value="${data.total||0}"></div><button class="danger" onclick="this.parentElement.remove()">×</button>`;$('invoiceItems').appendChild(d);d.querySelectorAll('input').forEach(x=>x.addEventListener('input',calcRows));calcRows()}
+function autoPrice(inp){let p=products.find(x=>x.name===inp.value);if(p){inp.parentElement.parentElement.querySelector('.itPrice').value=p.price||0;}}
+function calcRows(){document.querySelectorAll('.itemrow').forEach(r=>r.querySelector('.itTotal').value=(+r.querySelector('.itQty').value||0)*(+r.querySelector('.itPrice').value||0))}
+function saveProduct(){let f=$('pImage').files[0];let save=(img='')=>{products.push({id:Date.now(),name:$('pName').value,code:$('pCode').value,unit:$('pUnit').value,price:+$('pPrice').value||0,desc:$('pDesc').value,img});localStorage.setItem('hmp_products',JSON.stringify(products));['pName','pCode','pUnit','pPrice','pDesc'].forEach(x=>$(x).value='');$('pImage').value='';renderProducts();alert('পণ্য সেভ হয়েছে।')};if(f){let r=new FileReader();r.onload=()=>save(r.result);r.readAsDataURL(f)}else save()}
+function renderProducts(){$('productTable').innerHTML=products.map(p=>`<tr><td>${p.img?`<img class="sample" src="${p.img}">`:''}</td><td>${p.name}</td><td>${p.code||''}</td><td>${p.unit||''}</td><td>${money(p.price)}</td><td>${p.desc||''}</td><td><button class="danger" onclick="delProduct(${p.id})">মুছুন</button></td></tr>`).join('');let dl=document.getElementById('productList')||document.createElement('datalist');dl.id='productList';dl.innerHTML=products.map(p=>`<option value="${p.name}">`).join('');document.body.appendChild(dl)}
+function delProduct(id){products=products.filter(x=>x.id!==id);localStorage.setItem('hmp_products',JSON.stringify(products));renderProducts()}
+function saveCustomer(){customers.push({id:Date.now(),name:$('cName').value,phone:$('cPhone').value,address:$('cAddress').value});localStorage.setItem('hmp_customers',JSON.stringify(customers));['cName','cPhone','cAddress'].forEach(x=>$(x).value='');renderCustomers();alert('কাস্টমার সেভ হয়েছে।')}
+function renderCustomers(){$('customerTable').innerHTML=customers.map(c=>`<tr><td>${c.name}</td><td>${c.phone||''}</td><td>${c.address||''}</td><td><button class="danger" onclick="delCustomer(${c.id})">মুছুন</button></td></tr>`).join('');$('customerList').innerHTML=customers.map(c=>`<option value="${c.name}">`).join('')}
+function delCustomer(id){customers=customers.filter(x=>x.id!==id);localStorage.setItem('hmp_customers',JSON.stringify(customers));renderCustomers()}
+$('invCustomer').addEventListener('change',()=>{let c=customers.find(x=>x.name===$('invCustomer').value);if(c)$('invAddress').value=c.address||''})
+function prepareInvoicePrint(){calcRows();let items=[...document.querySelectorAll('.itemrow')].map(r=>({name:r.querySelector('.itName').value,qty:r.querySelector('.itQty').value,price:r.querySelector('.itPrice').value,total:r.querySelector('.itTotal').value})).filter(x=>x.name);let total=items.reduce((s,x)=>s+(+x.total||0),0);let inv={no:$('invNo').value,date:$('invDate').value,customer:$('invCustomer').value,address:$('invAddress').value,items,total};invoices.push(inv);localStorage.setItem('hmp_invoices',JSON.stringify(invoices));renderInvoice(inv);$('printArea').classList.remove('hidden');setTimeout(()=>window.print(),250)}
+function renderInvoice(inv){$('printArea').innerHTML=`<div class="invoice-paper"><div class="invoice-head"><h2>HMP এইচ এম প্রিন্টিং</h2><p>রোড নং-৮, প্লট নং-১৭, শ্যামপুর, কদমতলী, ঢাকা</p><b>ক্যাশ মেমো</b></div><div style="display:flex;justify-content:space-between;margin:15px 0"><span>নং: <b>${inv.no}</b></span><span>তারিখ: <b>${inv.date}</b></span></div><div>নাম: ${inv.customer||''}</div><div>ঠিকানা: ${inv.address||''}</div><table><thead><tr><th>সংখ্যা</th><th>মালের বিবরণ</th><th>পরিমাণ</th><th>দর</th><th>টাকা</th></tr></thead><tbody>${inv.items.map((x,i)=>`<tr><td>${i+1}</td><td>${x.name}</td><td>${x.qty}</td><td>${money(x.price)}</td><td>${money(x.total)}</td></tr>`).join('')}<tr><td colspan="4" class="right"><b>মোট</b></td><td><b>${money(inv.total)}</b></td></tr></tbody></table><p>টাকা কথায়: ________________________________</p><div style="display:flex;justify-content:space-between;margin-top:55px"><span>ক্রেতার স্বাক্ষর</span><span>এইচ এম প্রিন্টিং</span></div></div>`}
+function printChallan(){let no=$('chNo').value||nextNo(),date=$('chDate').value||today();$('challanPrint').innerHTML=`<div class="invoice-paper"><div class="invoice-head"><h2>HMP এইচ এম প্রিন্টিং</h2><p>রোড নং-৮, প্লট নং-১৭, শ্যামপুর, কদমতলী, ঢাকা</p><b>ডেলিভারি চালান</b></div><p>নং: <b>${no}</b> &nbsp;&nbsp; তারিখ: <b>${date}</b></p><p>নাম: ${$('chCustomer').value}</p><p>ঠিকানা: ${$('chAddress').value}</p><table><thead><tr><th>সংখ্যা</th><th>মালের বিবরণ</th></tr></thead><tbody>${$('chItems').value.split('\\n').filter(Boolean).map((x,i)=>`<tr><td>${i+1}</td><td>${x}</td></tr>`).join('')}</tbody></table><div style="display:flex;justify-content:space-between;margin-top:70px"><span>গ্রাহকের স্বাক্ষর</span><span>কর্তৃপক্ষের স্বাক্ষর</span></div></div>`;$('challanPrint').classList.remove('hidden');setTimeout(()=>window.print(),250)}
+function renderHistory(){$('historyTable').innerHTML=invoices.slice().reverse().map((x,i)=>`<tr><td>${x.no}</td><td>${x.date}</td><td>${x.customer||''}</td><td>${money(x.total)}</td><td><button onclick='renderInvoice(${JSON.stringify(x)});show("invoice");$("printArea").classList.remove("hidden")'>দেখুন</button></td></tr>`).join('')}
+function dashboard(){let t=today(),a=invoices.filter(x=>x.date===t);$('statBills').textContent=a.length;$('statSales').textContent=money(a.reduce((s,x)=>s+x.total,0));$('statProducts').textContent=products.length;$('statCustomers').textContent=customers.length}
+dashboard();renderCustomers();renderProducts();show('dashboard');
+</script>
+</body>
+</html>
