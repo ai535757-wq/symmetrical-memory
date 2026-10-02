@@ -438,4 +438,45 @@ app.get("/api/expenses", auth, (req, res) => {
   );
 });
 
-app.post("/api/expenses
+app.post("/api/expenses", auth, (req, res) => {
+  const b = req.body;
+
+  const result = db.prepare(`
+    INSERT INTO expenses (date, type, amount, note)
+    VALUES (?, ?, ?, ?)
+  `).run(
+    b.date || new Date().toISOString().slice(0, 10),
+    b.type || "",
+    Number(b.amount || 0),
+    b.note || ""
+  );
+
+  res.json({
+    ok: true,
+    id: result.lastInsertRowid
+  });
+});
+
+// Frontend
+app.get("/", (req, res) => {
+  const file = path.join(__dirname, "public_index.html");
+
+  if (fs.existsSync(file)) {
+    return res.sendFile(file);
+  }
+
+  return res.status(404).send("HMP Printing frontend file not found");
+});
+
+app.use((req, res) => {
+  res.status(404).json({ error: "Not found" });
+});
+
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ error: "Server error" });
+});
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`HMP Printing server running on port ${PORT}`);
+});
