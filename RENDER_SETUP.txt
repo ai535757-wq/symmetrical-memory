@@ -1,0 +1,15 @@
+HMP Printing - Render setup
+
+Build Command: npm install
+Start Command: npm start
+
+Environment Variables:
+JWT_SECRET=<your strong random secret>
+ADMIN_USER=admin
+ADMIN_PASSWORD=<your strong admin password>
+NODE_ENV=production
+
+For persistent SQLite data on Render, use a persistent disk and set:
+DB_PATH=/var/data/hmp.sqlite
+
+Do not commit passwords or JWT secrets to GitHub.

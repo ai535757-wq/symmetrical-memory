@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: hmp-printing-online
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_USER
+        value: admin
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: DB_PATH
+        value: /var/data/hmp.sqlite
+    disk:
+      name: hmp-data
+      mountPath: /var/data
+      sizeGB: 1
